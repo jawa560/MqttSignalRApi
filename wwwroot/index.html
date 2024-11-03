@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignalR Temperature Monitor by SignalR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.10/signalr.min.js"></script>
+    <style>
+        <!--
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* 設置容器高度為視口高度 */
+        }
+
+        .block01 {
+            border: 3px dashed #008000;
+            background-color: #CCFF99;
+            font-family: Verdana;
+            font-size: 18pt;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 15px;
+            height: 45px;
+            padding: 20px;
+        }
+        -->
+    </style>
+</head>
+<body>
+    <h1>Temperature Monitor by SignalR</h1>
+    <table width="98%">
+        <tr>
+            <td width="20%">Device001<div class="block01" id="Device001"></div></td>
+            <td width="20%">Device002<div class="block01" id="Device002"></div></td>
+            <td width="20%">Device003<div class="block01" id="Device003"></div></td>
+            <td width="20%">Device004<div class="block01" id="Device004"></div></td>
+            <td width="20%">Device005<div class="block01" id="Device005"></div></td>
+        </tr>
+        <tr>
+            <td width="20%">Device006<div class="block01" id="Device006"></div></td>
+            <td width="20%">Device007<div class="block01" id="Device007"></div></td>
+            <td width="20%">Device008<div class="block01" id="Device008"></div></td>
+            <td width="20%">Device009<div class="block01" id="Device009"></div></td>
+            <td width="20%">Device0010<div class="block01" id="Device0010"></div></td>
+        </tr>
+    </table>
+
+    <div id="temperatureData"></div>
+
+    <script>
+        // 建立 SignalR 連接
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/temperatureHub")
+            .build();
+
+        // 設置接收訊息的處理器
+        connection.on("ReceiveMessage", function (message) {
+            const dataDiv = document.getElementById('temperatureData');
+            const datastr = `${message}`;
+            //alert(datastr);
+            const str = datastr.split(',');
+
+            const str1 = str[0].split(":");
+            const str2 = str[1].split(":");
+
+            const strID = str1[1];
+            const strTemperature = str2[1];
+            const oDiv = document.getElementById(`${strID}`);
+
+            dataDiv.innerHTML = `<p>${datastr}</p>`;
+            oDiv.innerHTML = `${strTemperature}`;
+
+        });
+
+        // 開始連接
+        connection.start().catch(err => console.error(err.toString()));
+    </script>
+</body>
+</html>
